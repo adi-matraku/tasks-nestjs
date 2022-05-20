@@ -1,25 +1,31 @@
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaskStatusEntity } from './task-status.entity';
 import { TaskTypeEntity } from './task-type.entity';
+
+// import { TaskTypeEntity } from './task-type.entity';
 
 @Entity('tasks')
 export class TaskEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => TaskStatusEntity, task => task.status)
-  @Column({
-    default: 'created',
-  })
-  status: string;
+  @Column({})
+  name: string;
 
-  @OneToMany(() => TaskTypeEntity, task => task.type)
-  @Column()
-  type: string;
+  @Column({})
+  description: string;
+
+  @ManyToOne(() => TaskStatusEntity, status => status.id)
+  status: TaskStatusEntity;
+
+  @ManyToMany(() => TaskTypeEntity)
+  @JoinTable()
+  type: TaskTypeEntity[];
 }

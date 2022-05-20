@@ -15,6 +15,6 @@ export class TaskStatusEntity {
   @Column()
   type: string;
 
-  @ManyToOne(() => TaskEntity, task => task.status)
-  status: TaskEntity[];
+  @OneToMany(() => TaskEntity, task => task.id)
+  task: TaskEntity[];
 }

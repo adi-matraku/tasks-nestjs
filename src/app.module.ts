@@ -4,6 +4,7 @@ import { UsersModule } from './modules/users/users.module';
 import { databaseProviders } from './providers/database.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -18,7 +19,9 @@ import { join } from 'path';
       username: 'root',
       password: 'Bewzing4321',
       database: 'tasks_db',
+      autoLoadEntities: true,
     }),
+    TasksModule,
   ],
   controllers: [],
   providers: [...databaseProviders],

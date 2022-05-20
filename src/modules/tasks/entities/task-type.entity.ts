@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { TaskEntity } from './task.entity';
 
 @Entity('task_type')
@@ -7,8 +14,8 @@ export class TaskTypeEntity {
   id: number;
 
   @Column({})
-  status: string;
+  name: string;
 
-  @ManyToOne(() => TaskEntity, task => task.type)
-  type: TaskEntity[];
+  @ManyToMany(() => TaskEntity)
+  task: TaskEntity[];
 }
