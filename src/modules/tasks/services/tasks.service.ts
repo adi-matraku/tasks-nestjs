@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 // import { CreateTaskDto } from '../dtos/createTaskDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from '../entities/task.entity';
@@ -22,18 +22,44 @@ export class TasksService {
 
   async createOne(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
+      const typeIds = createTaskDto.typeId;
       const taskStatus = await this.tasksStatusRepository.findOne(
         createTaskDto.statusId
       );
       const taskType = await this.tasksTypeRepository.findByIds(
         createTaskDto.typeId
       );
-      console.log(taskType);
       const task = new TaskEntity();
       task.name = createTaskDto.name;
       task.description = createTaskDto.description;
       task.type = taskType;
       task.status = taskStatus;
+
+      if (!taskStatus) {
+        throw new HttpException('Status ID not found', HttpStatus.BAD_REQUEST);
+      } else if (taskType.length === 0) {
+        throw new HttpException(
+          'Task Type ID is not found!',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      if (typeIds.length === taskType.length) {
+        for (let i = 0; i < typeIds.length; i++) {
+          if (!typeIds.includes(taskType[i].id)) {
+            throw new HttpException(
+              'Task Type ID is not found!',
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        }
+      } else {
+        throw new HttpException(
+          'Task Type ID is not found!',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
       await this.taskRepository.save(task);
       return task as Task;
     } catch (error) {

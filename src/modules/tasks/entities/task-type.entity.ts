@@ -13,7 +13,7 @@ export class TaskTypeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({})
+  @Column()
   name: string;
 
   @ManyToMany(() => TaskEntity)
