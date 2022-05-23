@@ -1,13 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-// import { CreateTaskDto } from '../dtos/createTaskDto';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from '../entities/task.entity';
 import { Repository } from 'typeorm';
 import { TaskStatusEntity } from '../entities/task-status.entity';
 import { TaskTypeEntity } from '../entities/task-type.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
-import { TaskStatus } from '../models/task-status.model';
 import { Task } from '../models/task.model';
+import { NotFoundException } from '../utils/not-found.exception';
 
 @Injectable()
 export class TasksService {
@@ -19,6 +18,29 @@ export class TasksService {
     @InjectRepository(TaskTypeEntity)
     private readonly tasksTypeRepository: Repository<TaskTypeEntity>
   ) {}
+
+  async getAll(query: any): Promise<any> {
+    const startRow = (query.pageNumber - 1) * query.pageSize;
+    const where: any = { isActive: true };
+    if (query.name) {
+      where.name = query.name;
+    }
+    const [data, total] = await this.taskRepository.findAndCount({
+      take: query.pageSize,
+      skip: startRow,
+      where,
+      relations: ['status', 'type'],
+    });
+    console.log(startRow);
+    return {
+      data,
+      meta: {
+        total,
+        pageSize: query.pageSize,
+        pageNumber: query.pageNumber,
+      },
+    };
+  }
 
   async createOne(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
@@ -36,32 +58,101 @@ export class TasksService {
       task.status = taskStatus;
 
       if (!taskStatus) {
-        throw new HttpException('Status ID not found', HttpStatus.BAD_REQUEST);
-      } else if (taskType.length === 0) {
-        throw new HttpException(
-          'Task Type ID is not found!',
-          HttpStatus.BAD_REQUEST
-        );
+        throw new NotFoundException('Status ID not Found.');
       }
 
-      if (typeIds.length === taskType.length) {
+      if (taskType.length === typeIds.length) {
         for (let i = 0; i < typeIds.length; i++) {
           if (!typeIds.includes(taskType[i].id)) {
-            throw new HttpException(
-              'Task Type ID is not found!',
-              HttpStatus.BAD_REQUEST
-            );
+            throw new NotFoundException();
           }
         }
       } else {
-        throw new HttpException(
-          'Task Type ID is not found!',
-          HttpStatus.BAD_REQUEST
-        );
+        throw new NotFoundException();
       }
 
       await this.taskRepository.save(task);
       return task as Task;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async editOne(editTaskDto: CreateTaskDto, id: number): Promise<Task> {
+    try {
+      const task = await this.taskRepository.findOne(id);
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+      const typeIds = editTaskDto.typeId;
+      const taskStatus = await this.tasksStatusRepository.findOne(
+        editTaskDto.statusId
+      );
+      const taskType = await this.tasksTypeRepository.findByIds(
+        editTaskDto.typeId
+      );
+      task.name = editTaskDto.name;
+      task.description = editTaskDto.description;
+      task.type = taskType;
+      task.status = taskStatus;
+
+      if (!taskStatus) {
+        throw new NotFoundException('Status ID not Found.');
+      }
+
+      if (taskType.length === typeIds.length) {
+        for (let i = 0; i < typeIds.length; i++) {
+          if (!typeIds.includes(taskType[i].id)) {
+            throw new NotFoundException();
+          }
+        }
+      } else {
+        throw new NotFoundException();
+      }
+
+      await this.taskRepository.save(task);
+      return task as Task;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async editStatus(
+    editStatusDto: { statusId: number },
+    id: number
+  ): Promise<Task> {
+    try {
+      const task = await this.taskRepository.findOne(id);
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+
+      const taskStatus = await this.tasksStatusRepository.findOne(
+        editStatusDto.statusId
+      );
+
+      if (!taskStatus) {
+        throw new NotFoundException('Status ID not Found.');
+      }
+
+      task.status = taskStatus;
+
+      await this.taskRepository.save(task);
+      return task as Task;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteOne(id: number): Promise<void> {
+    try {
+      const task = await this.taskRepository.findOne(id);
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+      task.isActive = false;
+      await this.taskRepository.save(task);
+      return;
     } catch (error) {
       throw error;
     }

@@ -22,6 +22,12 @@ export class TaskEntity {
   @Column({})
   description: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column()
+  createdAt: Date;
+
   @ManyToOne(() => TaskStatusEntity, status => status.id)
   status: TaskStatusEntity;
 

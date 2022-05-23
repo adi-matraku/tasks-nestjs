@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { TaskTypeEntity } from '../entities/task-type.entity';
 import { TaskTypeDto } from '../dtos/taskType.dto';
 import { TaskType } from '../models/task-type.model';
-import { TaskStatus } from '../models/task-status.model';
 
 @Injectable()
 export class TasksTypeService {
