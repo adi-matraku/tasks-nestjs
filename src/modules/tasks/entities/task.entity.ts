@@ -28,6 +28,12 @@ export class TaskEntity {
   @Column()
   createdAt: Date;
 
+  @Column({ default: null })
+  lastUpdatedAt: Date;
+
+  @Column({ default: null })
+  lastUpdatedBy: Date;
+
   @ManyToOne(() => TaskStatusEntity, status => status.id)
   status: TaskStatusEntity;
 

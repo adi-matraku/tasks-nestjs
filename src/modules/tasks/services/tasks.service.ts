@@ -56,6 +56,7 @@ export class TasksService {
       task.description = createTaskDto.description;
       task.type = taskType;
       task.status = taskStatus;
+      task.createdAt = new Date();
 
       if (!taskStatus) {
         throw new NotFoundException('Status ID not Found.');
