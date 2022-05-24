@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -39,5 +40,11 @@ export class TaskTypeController {
   @UsePipes(ValidationPipe)
   async editOne(@Body() editTypeDto: TaskTypeDto, @Param('id') id: number) {
     return this.tasksTypeService.editOne(editTypeDto, id);
+  }
+
+  @Delete(':id')
+  @UsePipes(ValidationPipe)
+  async deleteOne(@Param('id') id: number) {
+    return this.tasksTypeService.deleteOne(id);
   }
 }

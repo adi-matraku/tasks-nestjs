@@ -50,13 +50,27 @@ export class TasksTypeService {
         where: { id: id, isActive: true },
       });
       if (!type) {
-        throw new NotFoundException('Task not found');
+        throw new NotFoundException('Type not found');
       }
 
       type.name = editStatusDto.name;
 
       await this.taskTypeRepository.save(type);
       return type as TaskType;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteOne(id: number): Promise<void> {
+    try {
+      const type = await this.taskTypeRepository.findOne(id);
+      if (!type) {
+        throw new NotFoundException('Task not found');
+      }
+      type.isActive = false;
+      await this.taskTypeRepository.save(type);
+      return;
     } catch (error) {
       throw error;
     }
