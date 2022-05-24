@@ -4,9 +4,7 @@ import { Repository } from 'typeorm';
 import { TaskTypeEntity } from '../entities/task-type.entity';
 import { TaskTypeDto } from '../dtos/taskType.dto';
 import { TaskType } from '../models/task-type.model';
-import { TaskStatus } from '../models/task-status.model';
 import { NotFoundException } from '../utils/not-found.exception';
-import { TaskStatusDto } from '../dtos/taskStatus.dto';
 
 @Injectable()
 export class TasksTypeService {
@@ -25,7 +23,9 @@ export class TasksTypeService {
 
   async getById(id: number): Promise<TaskType> {
     try {
-      const type = await this.taskTypeRepository.findOne(id);
+      const type = await this.taskTypeRepository.findOne({
+        where: { id: id, isActive: true },
+      });
       if (!type) {
         throw new NotFoundException('Type not Found.');
       }
@@ -64,7 +64,9 @@ export class TasksTypeService {
 
   async deleteOne(id: number): Promise<void> {
     try {
-      const type = await this.taskTypeRepository.findOne(id);
+      const type = await this.taskTypeRepository.findOne({
+        where: { id: id, isActive: true },
+      });
       if (!type) {
         throw new NotFoundException('Task not found');
       }

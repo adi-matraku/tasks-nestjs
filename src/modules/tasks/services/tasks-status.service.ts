@@ -5,8 +5,6 @@ import { TaskStatusEntity } from '../entities/task-status.entity';
 import { TaskStatusDto } from '../dtos/taskStatus.dto';
 import { TaskStatus } from '../models/task-status.model';
 import { NotFoundException } from '../utils/not-found.exception';
-import { EditTaskDto } from '../dtos/edit-task.dto';
-import { Task } from '../models/task.model';
 
 @Injectable()
 export class TasksStatusService {
@@ -25,7 +23,9 @@ export class TasksStatusService {
 
   async getById(id: number): Promise<TaskStatus> {
     try {
-      const status = await this.taskStatusRepository.findOne(id);
+      const status = await this.taskStatusRepository.findOne({
+        where: { id: id, isActive: true },
+      });
       if (!status) {
         throw new NotFoundException('Status not Found.');
       }
@@ -50,7 +50,7 @@ export class TasksStatusService {
         where: { id: id, isActive: true },
       });
       if (!status) {
-        throw new NotFoundException('Task not found');
+        throw new NotFoundException('Status not Found');
       }
 
       status.type = editStatusDto.type;
@@ -64,9 +64,11 @@ export class TasksStatusService {
 
   async deleteOne(id: number): Promise<void> {
     try {
-      const status = await this.taskStatusRepository.findOne(id);
+      const status = await this.taskStatusRepository.findOne({
+        where: { id: id, isActive: true },
+      });
       if (!status) {
-        throw new NotFoundException('Task not found');
+        throw new NotFoundException('Status not Found');
       }
       status.isActive = false;
       await this.taskStatusRepository.save(status);

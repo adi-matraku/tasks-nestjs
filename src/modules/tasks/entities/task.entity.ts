@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { TaskStatusEntity } from './task-status.entity';
 import { TaskTypeEntity } from './task-type.entity';
+import { Exclude } from 'class-transformer';
 
 // import { TaskTypeEntity } from './task-type.entity';
 
@@ -22,6 +23,7 @@ export class TaskEntity {
   @Column({})
   description: string;
 
+  @Exclude()
   @Column({ default: true })
   isActive: boolean;
 

@@ -89,7 +89,7 @@ export class TasksService {
   async editOne(editTaskDto: EditTaskDto, id: number): Promise<Task> {
     try {
       const task = await this.taskRepository.findOne({
-        where: { id: id },
+        where: { id: id, isActive: true },
         relations: ['status', 'type'],
       });
       if (!task) {
@@ -98,9 +98,9 @@ export class TasksService {
       const typeIds = editTaskDto.typeId;
 
       if (editTaskDto.statusId) {
-        const taskStatus = await this.tasksStatusRepository.findOne(
-          editTaskDto?.statusId
-        );
+        const taskStatus = await this.tasksStatusRepository.findOne({
+          where: { id: editTaskDto?.statusId, isActive: true },
+        });
         task.status = taskStatus;
 
         if (!taskStatus) {
@@ -110,7 +110,10 @@ export class TasksService {
 
       if (editTaskDto.typeId) {
         const taskType = await this.tasksTypeRepository.findByIds(
-          editTaskDto?.typeId
+          editTaskDto?.typeId,
+          {
+            where: { isActive: true },
+          }
         );
         task.type = taskType;
 
@@ -138,14 +141,16 @@ export class TasksService {
 
   async editStatus(editStatusDto: statusDto, id: number): Promise<Task> {
     try {
-      const task = await this.taskRepository.findOne(id);
+      const task = await this.taskRepository.findOne({
+        where: { id: id, isActive: true },
+      });
       if (!task) {
         throw new NotFoundException('Task not found');
       }
 
-      const taskStatus = await this.tasksStatusRepository.findOne(
-        editStatusDto.statusId
-      );
+      const taskStatus = await this.tasksStatusRepository.findOne({
+        where: { id: editStatusDto.statusId, isActive: true },
+      });
 
       if (!taskStatus) {
         throw new NotFoundException('Status ID not Found.');
@@ -162,7 +167,9 @@ export class TasksService {
 
   async deleteOne(id: number): Promise<void> {
     try {
-      const task = await this.taskRepository.findOne(id);
+      const task = await this.taskRepository.findOne({
+        where: { id: id, isActive: true },
+      });
       if (!task) {
         throw new NotFoundException('Task not found');
       }
