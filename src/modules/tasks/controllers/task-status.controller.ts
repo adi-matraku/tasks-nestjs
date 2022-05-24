@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UsePipes,
   ValidationPipe,
@@ -12,6 +13,11 @@ import { TaskStatus } from '../models/task-status.model';
 @Controller('taskStatus')
 export class TaskStatusController {
   constructor(private readonly tasksStatusService: TasksStatusService) {}
+
+  @Get('')
+  async getAll() {
+    return this.tasksStatusService.getAll();
+  }
 
   @Post('')
   @UsePipes(ValidationPipe)

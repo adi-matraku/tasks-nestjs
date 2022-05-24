@@ -12,11 +12,6 @@ import { queryDto } from '../dtos/query.dto';
 import { EditTaskDto } from '../dtos/edit-task.dto';
 import { TaskQuery } from '../models/task-query.model';
 
-export class taskProperties {
-  isActive: true;
-  name: string;
-}
-
 @Injectable()
 export class TasksService {
   constructor(
@@ -30,7 +25,7 @@ export class TasksService {
 
   async getAll(query: queryDto): Promise<TaskQuery> {
     const startRow = (query.pageNumber - 1) * query.pageSize;
-    const where!: taskProperties;
+    const where: any = { isActive: true };
     if (query.name) {
       where.name = query.name;
     }

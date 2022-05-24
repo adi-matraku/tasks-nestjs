@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TaskEntity } from '../entities/task.entity';
 import { Repository } from 'typeorm';
 import { TaskStatusEntity } from '../entities/task-status.entity';
 import { TaskStatusDto } from '../dtos/taskStatus.dto';
@@ -12,6 +11,10 @@ export class TasksStatusService {
     @InjectRepository(TaskStatusEntity)
     private readonly taskStatusRepository: Repository<TaskStatusEntity>
   ) {}
+
+  async getAll(): Promise<TaskStatus[]> {
+    return this.taskStatusRepository.find();
+  }
 
   async createOne(taskStatusDto: TaskStatusDto): Promise<TaskStatus> {
     try {
