@@ -13,6 +13,8 @@ import {
 import { TasksService } from '../services/tasks.service';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { queryDto } from '../dtos/query.dto';
+import { statusDto } from '../dtos/status.dto';
+import { EditTaskDto } from '../dtos/edit-task.dto';
 
 @Controller('tasks')
 export class CreateTaskController {
@@ -43,17 +45,13 @@ export class CreateTaskController {
 
   @Patch(':id')
   @UsePipes(ValidationPipe)
-  async editOne(@Body() editTaskDto: CreateTaskDto, @Param('id') id: number) {
+  async editOne(@Body() editTaskDto: EditTaskDto, @Param('id') id: number) {
     return this.tasksService.editOne(editTaskDto, id);
   }
 
   @Patch('status/:id')
   @UsePipes(ValidationPipe)
-  // beje dto
-  async editStatus(
-    @Body() editStatusDto: { statusId: number },
-    @Param('id') id: number
-  ) {
+  async editStatus(@Body() editStatusDto: statusDto, @Param('id') id: number) {
     return this.tasksService.editStatus(editStatusDto, id);
   }
 

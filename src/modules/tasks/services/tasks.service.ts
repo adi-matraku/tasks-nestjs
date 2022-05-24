@@ -9,6 +9,8 @@ import { Task } from '../models/task.model';
 import { NotFoundException } from '../utils/not-found.exception';
 import { statusDto } from '../dtos/status.dto';
 import { queryDto } from '../dtos/query.dto';
+import { EditTaskDto } from '../dtos/edit-task.dto';
+import { TaskQuery } from '../models/task-query.model';
 
 @Injectable()
 export class TasksService {
@@ -21,7 +23,7 @@ export class TasksService {
     private readonly tasksTypeRepository: Repository<TaskTypeEntity>
   ) {}
 
-  async getAll(query: queryDto): Promise<any> {
+  async getAll(query: queryDto): Promise<TaskQuery> {
     const startRow = (query.pageNumber - 1) * query.pageSize;
     const where: any = { isActive: true };
     if (query.name) {
@@ -81,37 +83,48 @@ export class TasksService {
     }
   }
 
-  async editOne(editTaskDto: CreateTaskDto, id: number): Promise<Task> {
+  async editOne(editTaskDto: EditTaskDto, id: number): Promise<Task> {
     try {
-      const task = await this.taskRepository.findOne(id);
+      const task = await this.taskRepository.findOne({
+        where: { id: id },
+        relations: ['status', 'type'],
+      });
       if (!task) {
         throw new NotFoundException('Task not found');
       }
       const typeIds = editTaskDto.typeId;
-      const taskStatus = await this.tasksStatusRepository.findOne(
-        editTaskDto.statusId
-      );
-      const taskType = await this.tasksTypeRepository.findByIds(
-        editTaskDto.typeId
-      );
-      task.name = editTaskDto.name;
-      task.description = editTaskDto.description;
-      task.type = taskType;
-      task.status = taskStatus;
 
-      if (!taskStatus) {
-        throw new NotFoundException('Status ID not Found.');
-      }
+      if (editTaskDto.statusId) {
+        const taskStatus = await this.tasksStatusRepository.findOne(
+          editTaskDto?.statusId
+        );
+        task.status = taskStatus;
 
-      if (taskType.length === typeIds.length) {
-        for (let i = 0; i < typeIds.length; i++) {
-          if (!typeIds.includes(taskType[i].id)) {
-            throw new NotFoundException();
-          }
+        if (!taskStatus) {
+          throw new NotFoundException('Status ID not Found.');
         }
-      } else {
-        throw new NotFoundException();
       }
+
+      if (editTaskDto.typeId) {
+        const taskType = await this.tasksTypeRepository.findByIds(
+          editTaskDto?.typeId
+        );
+        task.type = taskType;
+
+        if (taskType?.length === typeIds?.length) {
+          for (let i = 0; i < typeIds?.length; i++) {
+            if (!typeIds?.includes(taskType[i]?.id)) {
+              throw new NotFoundException();
+            }
+          }
+        } else {
+          throw new NotFoundException();
+        }
+      }
+
+      task.name = editTaskDto?.name;
+      task.description = editTaskDto?.description;
+      task.lastUpdatedAt = new Date();
 
       await this.taskRepository.save(task);
       return task as Task;
