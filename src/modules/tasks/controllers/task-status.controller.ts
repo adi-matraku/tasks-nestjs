@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
@@ -13,6 +15,7 @@ import {
 import { TasksStatusService } from '../services/tasks-status.service';
 import { TaskStatusDto } from '../dtos/taskStatus.dto';
 import { TaskStatus } from '../models/task-status.model';
+import { EditTaskDto } from '../dtos/edit-task.dto';
 
 @Controller('taskStatus')
 export class TaskStatusController {
@@ -32,5 +35,17 @@ export class TaskStatusController {
   @UsePipes(ValidationPipe)
   async createTask(@Body() taskStatus: TaskStatusDto): Promise<TaskStatus> {
     return this.tasksStatusService.createOne(taskStatus);
+  }
+
+  @Delete(':id')
+  @UsePipes(ValidationPipe)
+  async deleteOne(@Param('id') id: number) {
+    return this.tasksStatusService.deleteOne(id);
+  }
+
+  @Patch(':id')
+  @UsePipes(ValidationPipe)
+  async editOne(@Body() editStatusDto: TaskStatusDto, @Param('id') id: number) {
+    return this.tasksStatusService.editOne(editStatusDto, id);
   }
 }
