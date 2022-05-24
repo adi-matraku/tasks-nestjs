@@ -49,11 +49,14 @@ export class TasksService {
   async createOne(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
       const typeIds = createTaskDto.typeId;
-      const taskStatus = await this.tasksStatusRepository.findOne(
-        createTaskDto.statusId
-      );
+      const taskStatus = await this.tasksStatusRepository.findOne({
+        where: { id: createTaskDto.statusId, isActive: true },
+      });
       const taskType = await this.tasksTypeRepository.findByIds(
-        createTaskDto.typeId
+        createTaskDto.typeId,
+        {
+          where: { isActive: true },
+        }
       );
       const task = new TaskEntity();
       task.name = createTaskDto.name;

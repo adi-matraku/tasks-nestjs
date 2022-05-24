@@ -7,10 +7,12 @@ import { TaskEntity } from './entities/task.entity';
 import { TaskStatusEntity } from './entities/task-status.entity';
 import { TaskStatusController } from './controllers/task-status.controller';
 import { TaskTypeEntity } from './entities/task-type.entity';
+import { TaskTypeController } from './controllers/task-type.controller';
+import { TasksTypeService } from './services/tasks-type.service';
 
 @Module({
-  controllers: [CreateTaskController, TaskStatusController],
-  providers: [TasksService, TasksStatusService],
+  controllers: [CreateTaskController, TaskStatusController, TaskTypeController],
+  providers: [TasksService, TasksStatusService, TasksTypeService],
   imports: [
     TypeOrmModule.forFeature([TaskEntity, TaskStatusEntity, TaskTypeEntity]),
   ],

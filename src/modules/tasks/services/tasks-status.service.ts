@@ -27,7 +27,7 @@ export class TasksStatusService {
     try {
       const status = await this.taskStatusRepository.findOne(id);
       if (!status) {
-        throw new NotFoundException('Status not found.');
+        throw new NotFoundException('Status not Found.');
       }
       return status as TaskStatus;
     } catch (err) {

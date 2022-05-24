@@ -20,11 +20,6 @@ import { EditTaskDto } from '../dtos/edit-task.dto';
 export class CreateTaskController {
   constructor(private readonly tasksService: TasksService) {}
 
-  //get all me filtra dhe paginim
-  // get one by id
-  // patch
-  // soft delete
-
   //@HttpCode(204)
   //    @Param('pageNumber') pageNumber: number,
   //     @Param('pageSize') pageSize: number,

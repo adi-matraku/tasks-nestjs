@@ -16,6 +16,9 @@ export class TaskTypeEntity {
   @Column()
   name: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @ManyToMany(() => TaskEntity)
   task: TaskEntity[];
 }
