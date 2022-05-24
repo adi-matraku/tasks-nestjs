@@ -7,8 +7,4 @@ export class Task {
   description: string;
   status: TaskStatusEntity;
   type: TaskTypeEntity[];
-  // createdAt: Date;
-  // lastUpdatedAt: Date;
-  // lastUpdatedBy: string;
-  // isActive: boolean;
 }
