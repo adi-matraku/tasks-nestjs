@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { TasksService } from '../services/tasks.service';
 import { CreateTaskDto } from '../dtos/create-task.dto';
+import { queryDto } from '../dtos/query.dto';
 
 @Controller('tasks')
 export class CreateTaskController {
@@ -29,7 +30,7 @@ export class CreateTaskController {
   //     @Param('name') name: string,
   //     @Param('description') description: string
   @Get('')
-  async getAll(@Query() query: { pageNumber: number; pageSize: number }) {
+  async getAll(@Query() query: queryDto) {
     console.log(query);
     return this.tasksService.getAll(query);
   }

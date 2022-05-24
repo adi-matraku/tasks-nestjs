@@ -7,6 +7,8 @@ import { TaskTypeEntity } from '../entities/task-type.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { Task } from '../models/task.model';
 import { NotFoundException } from '../utils/not-found.exception';
+import { statusDto } from '../dtos/status.dto';
+import { queryDto } from '../dtos/query.dto';
 
 @Injectable()
 export class TasksService {
@@ -19,7 +21,7 @@ export class TasksService {
     private readonly tasksTypeRepository: Repository<TaskTypeEntity>
   ) {}
 
-  async getAll(query: any): Promise<any> {
+  async getAll(query: queryDto): Promise<any> {
     const startRow = (query.pageNumber - 1) * query.pageSize;
     const where: any = { isActive: true };
     if (query.name) {
@@ -118,10 +120,7 @@ export class TasksService {
     }
   }
 
-  async editStatus(
-    editStatusDto: { statusId: number },
-    id: number
-  ): Promise<Task> {
+  async editStatus(editStatusDto: statusDto, id: number): Promise<Task> {
     try {
       const task = await this.taskRepository.findOne(id);
       if (!task) {
