@@ -2,6 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   UsePipes,
   ValidationPipe,
@@ -17,6 +21,11 @@ export class TaskStatusController {
   @Get('')
   async getAll() {
     return this.tasksStatusService.getAll();
+  }
+
+  @Get(':id')
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return this.tasksStatusService.getById(id);
   }
 
   @Post('')
