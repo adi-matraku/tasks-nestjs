@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,7 +17,8 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('')
-  async getAll() {
+  async getAll(@Query('username') username: string) {
+    console.log(username);
     return this.usersService.getAll();
   }
 
