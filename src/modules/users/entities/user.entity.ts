@@ -2,6 +2,7 @@ import { TaskEntity } from 'src/modules/tasks/entities/task.entity';
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -41,6 +42,7 @@ export class UserEntity {
   isActive: boolean;
 
   @OneToMany(() => TaskEntity, task => task.id)
+  @JoinTable()
   task: TaskEntity[];
 
   @ManyToOne(() => RoleEntity, role => role.id)

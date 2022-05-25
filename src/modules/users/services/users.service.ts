@@ -18,7 +18,10 @@ export class UsersService {
 
   async getAll(): Promise<User[]> {
     try {
-      return this.usersRepository.find({ where: { isActive: true } });
+      return this.usersRepository.find({
+        where: { isActive: true },
+        relations: ['task'],
+      });
     } catch (err) {
       throw err;
     }
@@ -54,7 +57,7 @@ export class UsersService {
       user.password = createUserDto.password;
       user.role = roleId;
 
-      user.createdAt = new Date();
+      user.lastUpdatedAt = user.createdAt = new Date();
 
       await this.usersRepository.save(user);
       return user as User;
