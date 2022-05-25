@@ -6,7 +6,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { RegisterUserDto } from '../dtos/registerUser.dto';
+import { CreateUserDto } from '../dtos/createUser.dto';
 import { UsersService } from '../services/users.service';
 
 @Controller('users')
@@ -20,7 +20,7 @@ export class UsersController {
 
   @Post('signup')
   @UsePipes(ValidationPipe)
-  registerUser(@Body() registerUserDto: RegisterUserDto) {
-    this.usersService.registerUser(registerUserDto);
+  registerUser(@Body() createUserDto: CreateUserDto) {
+    this.usersService.registerUser(createUserDto);
   }
 }
