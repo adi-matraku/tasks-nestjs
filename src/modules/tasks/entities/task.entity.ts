@@ -9,8 +9,7 @@ import {
 import { TaskStatusEntity } from './task-status.entity';
 import { TaskTypeEntity } from './task-type.entity';
 import { Exclude } from 'class-transformer';
-
-// import { TaskTypeEntity } from './task-type.entity';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -42,4 +41,7 @@ export class TaskEntity {
   @ManyToMany(() => TaskTypeEntity)
   @JoinTable()
   type: TaskTypeEntity[];
+
+  @ManyToOne(() => UserEntity, user => user.id)
+  user: UserEntity;
 }
