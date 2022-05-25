@@ -3,7 +3,7 @@ import { CreateUserDto } from '../dtos/createUser.dto';
 
 @Injectable()
 export class UsersService {
-  private users: createUserDto[] = [];
+  private users: CreateUserDto[] = [];
 
   getAllUsers() {
     return this.users;
