@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/createUser.dto';
+import { RoleEntity } from '../entities/role.entity';
 import { UserEntity } from '../entities/user.entity';
 import { User } from '../models/User';
 
@@ -9,7 +10,9 @@ import { User } from '../models/User';
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<UserEntity>
+    private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly rolesRepository: Repository<RoleEntity>
   ) {}
 
   async getAll(): Promise<User[]> {
@@ -22,12 +25,17 @@ export class UsersService {
 
   async createOne(createUserDto: CreateUserDto): Promise<User> {
     try {
+      const roleId = await this.rolesRepository.findOne({
+        where: { id: createUserDto.role, isActive: true },
+      });
       const user = new UserEntity();
       user.username = createUserDto.username;
       user.email = createUserDto.email;
       user.firstName = createUserDto.firstName;
       user.lastName = createUserDto.lastName;
       user.password = createUserDto.password;
+      user.role = roleId;
+
       user.createdAt = new Date();
 
       await this.usersRepository.save(user);
