@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   UsePipes,
   ValidationPipe,
@@ -14,8 +16,13 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('')
-  getAllUsers() {
+  async getAll() {
     return this.usersService.getAll();
+  }
+
+  @Get(':id')
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getById(id);
   }
 
   @Post('create')
