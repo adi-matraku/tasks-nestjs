@@ -16,7 +16,6 @@ export class TaskStatusEntity {
   @Column()
   type: string;
 
-  @Exclude()
   @Column({ default: true })
   isActive: boolean;
 
