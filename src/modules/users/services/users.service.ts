@@ -20,7 +20,6 @@ export class UsersService {
     try {
       return this.usersRepository.find({
         where: { isActive: true },
-        relations: ['task'],
       });
     } catch (err) {
       throw err;
