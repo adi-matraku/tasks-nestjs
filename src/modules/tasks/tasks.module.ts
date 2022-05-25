@@ -9,12 +9,18 @@ import { TaskStatusController } from './controllers/task-status.controller';
 import { TaskTypeEntity } from './entities/task-type.entity';
 import { TaskTypeController } from './controllers/task-type.controller';
 import { TasksTypeService } from './services/tasks-type.service';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Module({
   controllers: [CreateTaskController, TaskStatusController, TaskTypeController],
   providers: [TasksService, TasksStatusService, TasksTypeService],
   imports: [
-    TypeOrmModule.forFeature([TaskEntity, TaskStatusEntity, TaskTypeEntity]),
+    TypeOrmModule.forFeature([
+      TaskEntity,
+      TaskStatusEntity,
+      TaskTypeEntity,
+      UserEntity,
+    ]),
   ],
 })
 export class TasksModule {}

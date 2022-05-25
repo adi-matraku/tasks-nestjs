@@ -11,6 +11,7 @@ import { statusDto } from '../dtos/status.dto';
 import { queryDto } from '../dtos/query.dto';
 import { EditTaskDto } from '../dtos/edit-task.dto';
 import { TaskQuery } from '../models/task-query.model';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
 
 @Injectable()
 export class TasksService {
@@ -20,7 +21,9 @@ export class TasksService {
     @InjectRepository(TaskStatusEntity)
     private readonly tasksStatusRepository: Repository<TaskStatusEntity>,
     @InjectRepository(TaskTypeEntity)
-    private readonly tasksTypeRepository: Repository<TaskTypeEntity>
+    private readonly tasksTypeRepository: Repository<TaskTypeEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>
   ) {}
 
   async getAll(query: queryDto): Promise<TaskQuery> {
@@ -58,15 +61,22 @@ export class TasksService {
           where: { isActive: true },
         }
       );
+      const user = await this.usersRepository.findOne({
+        where: { id: createTaskDto.userId, isActive: true },
+      });
       const task = new TaskEntity();
       task.name = createTaskDto.name;
       task.description = createTaskDto.description;
       task.type = taskType;
       task.status = taskStatus;
+      task.user = user;
       task.createdAt = new Date();
 
       if (!taskStatus) {
         throw new NotFoundException('Status ID not Found.');
+      }
+      if (!user) {
+        throw new NotFoundException('User ID not Found.');
       }
 
       if (taskType.length === typeIds.length) {

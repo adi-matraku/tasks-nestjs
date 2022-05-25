@@ -23,4 +23,8 @@ export class CreateTaskDto {
   @IsNotEmpty()
   @ArrayNotEmpty()
   typeId: number[];
+
+  @IsNotEmpty()
+  @IsNumber()
+  userId: number;
 }
