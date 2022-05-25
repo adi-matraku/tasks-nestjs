@@ -15,12 +15,12 @@ export class UsersController {
 
   @Get('')
   getAllUsers() {
-    return this.usersService.getAllUsers();
+    return this.usersService.getAll();
   }
 
-  @Post('signup')
+  @Post('create')
   @UsePipes(ValidationPipe)
   registerUser(@Body() createUserDto: CreateUserDto) {
-    this.usersService.registerUser(createUserDto);
+    this.usersService.createOne(createUserDto);
   }
 }

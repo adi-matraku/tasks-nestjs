@@ -28,8 +28,14 @@ export class UserEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: null })
   salt: string;
+
+  @Column()
+  createdAt: Date;
+
+  @Column({ default: null })
+  lastUpdatedAt: Date;
 
   @Column({ default: true })
   isActive: boolean;

@@ -7,14 +7,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { TasksTypeService } from '../services/tasks-type.service';
 import { TaskType } from '../models/task-type.model';
 import { TaskTypeDto } from '../dtos/taskType.dto';
-import { TaskStatusDto } from '../dtos/taskStatus.dto';
 
 @Controller('taskType')
 export class TaskTypeController {
