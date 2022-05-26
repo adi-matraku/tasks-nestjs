@@ -9,7 +9,7 @@ import {
 import { TaskStatusEntity } from './task-status.entity';
 import { TaskTypeEntity } from './task-type.entity';
 import { Exclude } from 'class-transformer';
-import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity('tasks')
 export class TaskEntity {

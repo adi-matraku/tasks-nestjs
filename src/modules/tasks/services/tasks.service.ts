@@ -70,7 +70,7 @@ export class TasksService {
       task.type = taskType;
       task.status = taskStatus;
       task.user = user;
-      task.createdAt = new Date();
+      task.lastUpdatedAt = task.createdAt = new Date();
 
       if (!taskStatus) {
         throw new NotFoundException('Status ID not Found.');
