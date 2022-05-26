@@ -3,7 +3,6 @@ import { UsersService } from '../../users/services/users.service';
 import { LoginUserDto } from '../../users/dtos/loginUser.dto';
 import { comparePasswords } from '../utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { ConflictException } from '../exceptions/Conflict.exception';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +19,8 @@ export class AuthService {
       if (matched) {
         console.log('User Validation Success!');
         console.log(user);
-        const payload = { user };
+        const { id } = user;
+        const payload = { id };
         const accessToken = this.jwtService.sign(payload);
         return { accessToken };
       } else {
