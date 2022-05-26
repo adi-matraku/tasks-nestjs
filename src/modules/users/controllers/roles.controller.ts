@@ -5,17 +5,20 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { RolesDto } from '../dtos/roles.dto';
 import { RolesService } from '../services/roles.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('roles')
 export class RolesController {
   constructor(private rolesService: RolesService) {}
 
   @Get('')
+  @UseGuards(AuthGuard('jwt'))
   async getAll() {
     return this.rolesService.getAll();
   }

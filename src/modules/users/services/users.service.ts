@@ -8,7 +8,6 @@ import { UserEntity } from '../entities/user.entity';
 import { User } from '../models/User';
 import * as bcrypt from 'bcrypt';
 import { ConflictException } from '../../auth/exceptions/Conflict.exception';
-import { Role } from '../models/Role';
 
 @Injectable()
 export class UsersService {
@@ -69,7 +68,15 @@ export class UsersService {
     }
   }
 
-  private async checkRole(userDto: CreateUserDto): Promise<RoleEntity> {
+  async;
+
+  ////// FUNCTIONS //////
+
+  async findUserByEmail(email: string) {
+    return this.usersRepository.findOne({ email });
+  }
+
+  async checkRole(userDto: CreateUserDto): Promise<RoleEntity> {
     const roleId = await this.rolesRepository.findOne({
       where: { id: userDto.role },
     });
@@ -79,7 +86,7 @@ export class UsersService {
     return roleId;
   }
 
-  private async checkAuthentication(userDto: CreateUserDto): Promise<void> {
+  async checkAuthentication(userDto: CreateUserDto): Promise<void> {
     const emailUsed = await this.usersRepository.findOne({
       where: { email: userDto.email, isActive: true },
     });
