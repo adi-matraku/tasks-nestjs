@@ -8,6 +8,7 @@ import { UserEntity } from '../entities/user.entity';
 import { User } from '../models/User';
 import * as bcrypt from 'bcrypt';
 import { ConflictException } from '../../auth/exceptions/Conflict.exception';
+import { Role } from '../models/Role';
 
 @Injectable()
 export class UsersService {
@@ -44,23 +45,9 @@ export class UsersService {
 
   async createOne(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const roleId = await this.rolesRepository.findOne({
-        where: { id: createUserDto.role },
-      });
-      if (!roleId) {
-        throw new NotFoundException('Role ID Not Found.');
-      }
-      const emailUsed = await this.usersRepository.findOne({
-        where: { email: createUserDto.email, isActive: true },
-      });
-      const usernameUsed = await this.usersRepository.findOne({
-        where: { username: createUserDto.username, isActive: true },
-      });
-      if (emailUsed) {
-        throw new ConflictException();
-      } else if (usernameUsed) {
-        throw new ConflictException('Username already exists');
-      }
+      await this.checkAuthentication(createUserDto);
+      const roleId = await this.checkRole(createUserDto);
+
       const salt = await bcrypt.genSalt();
       const hashedPassword = await this.hashPassword(
         createUserDto.password,
@@ -79,6 +66,30 @@ export class UsersService {
       return user as User;
     } catch (error) {
       throw error;
+    }
+  }
+
+  private async checkRole(userDto: CreateUserDto): Promise<RoleEntity> {
+    const roleId = await this.rolesRepository.findOne({
+      where: { id: userDto.role },
+    });
+    if (!roleId) {
+      throw new NotFoundException('Role ID Not Found.');
+    }
+    return roleId;
+  }
+
+  private async checkAuthentication(userDto: CreateUserDto): Promise<void> {
+    const emailUsed = await this.usersRepository.findOne({
+      where: { email: userDto.email, isActive: true },
+    });
+    const usernameUsed = await this.usersRepository.findOne({
+      where: { username: userDto.username, isActive: true },
+    });
+    if (emailUsed) {
+      throw new ConflictException();
+    } else if (usernameUsed) {
+      throw new ConflictException('Username already exists');
     }
   }
 
