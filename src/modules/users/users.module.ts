@@ -11,5 +11,6 @@ import { UsersService } from './services/users.service';
   controllers: [UsersController, RolesController],
   providers: [UsersService, RolesService],
   imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity])],
+  exports: [UsersService],
 })
 export class UsersModule {}

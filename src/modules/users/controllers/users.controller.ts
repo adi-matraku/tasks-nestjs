@@ -26,10 +26,4 @@ export class UsersController {
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getById(id);
   }
-
-  @Post('create')
-  @UsePipes(ValidationPipe)
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createOne(createUserDto);
-  }
 }
