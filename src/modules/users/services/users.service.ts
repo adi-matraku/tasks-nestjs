@@ -6,6 +6,8 @@ import { CreateUserDto } from '../dtos/createUser.dto';
 import { RoleEntity } from '../entities/role.entity';
 import { UserEntity } from '../entities/user.entity';
 import { User } from '../models/User';
+import * as bcrypt from 'bcrypt';
+import { ConflictException } from '../../auth/exceptions/Conflict.exception';
 
 @Injectable()
 export class UsersService {
@@ -48,14 +50,29 @@ export class UsersService {
       if (!roleId) {
         throw new NotFoundException('Role ID Not Found.');
       }
+      const emailUsed = await this.usersRepository.findOne({
+        where: { email: createUserDto.email, isActive: true },
+      });
+      const usernameUsed = await this.usersRepository.findOne({
+        where: { username: createUserDto.username, isActive: true },
+      });
+      if (emailUsed) {
+        throw new ConflictException();
+      } else if (usernameUsed) {
+        throw new ConflictException('Username already exists');
+      }
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await this.hashPassword(
+        createUserDto.password,
+        salt
+      );
       const user = new UserEntity();
-      user.username = createUserDto.username;
-      user.email = createUserDto.email;
+      user.username = createUserDto.username.toLowerCase();
+      user.email = createUserDto.email.toLowerCase();
       user.firstName = createUserDto.firstName;
       user.lastName = createUserDto.lastName;
-      user.password = createUserDto.password;
+      user.password = hashedPassword;
       user.role = roleId;
-
       user.lastUpdatedAt = user.createdAt = new Date();
 
       await this.usersRepository.save(user);
@@ -63,5 +80,9 @@ export class UsersService {
     } catch (error) {
       throw error;
     }
+  }
+
+  private async hashPassword(password: string, salt: string): Promise<string> {
+    return bcrypt.hash(password, salt);
   }
 }

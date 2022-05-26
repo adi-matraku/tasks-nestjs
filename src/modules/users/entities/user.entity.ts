@@ -6,6 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { RoleEntity } from './role.entity';
 
 @Entity('user')
@@ -45,4 +46,9 @@ export class UserEntity {
 
   @ManyToOne(() => RoleEntity, role => role.id)
   role: RoleEntity;
+
+  async validatePassword(password: string): Promise<boolean> {
+    const hash = await bcrypt.hash(password, this.salt);
+    return hash === this.password;
+  }
 }
