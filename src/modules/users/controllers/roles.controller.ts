@@ -35,6 +35,7 @@ export class RolesController {
 
   @Post('create')
   @UsePipes(ValidationPipe)
+  @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async createUser(@Body() rolesDto: RolesDto) {
     return this.rolesService.createOne(rolesDto);
