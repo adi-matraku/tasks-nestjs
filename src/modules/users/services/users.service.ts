@@ -22,6 +22,7 @@ export class UsersService {
     try {
       return this.usersRepository.find({
         where: { isActive: true },
+        relations: ['role'],
       });
     } catch (err) {
       throw err;

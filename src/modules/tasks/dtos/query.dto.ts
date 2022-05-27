@@ -1,10 +1,13 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class queryDto {
   @IsNumber()
+  @IsOptional()
   pageNumber: number;
   @IsNumber()
+  @IsOptional()
   pageSize: number;
   @IsString()
+  @IsOptional()
   name: string;
 }
