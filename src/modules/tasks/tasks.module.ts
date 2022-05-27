@@ -10,6 +10,7 @@ import { TaskTypeEntity } from './entities/task-type.entity';
 import { TaskTypeController } from './controllers/task-type.controller';
 import { TasksTypeService } from './services/tasks-type.service';
 import { UserEntity } from '../users/entities/user.entity';
+import { RoleEntity } from '../users/entities/role.entity';
 
 @Module({
   controllers: [CreateTaskController, TaskStatusController, TaskTypeController],
@@ -20,6 +21,7 @@ import { UserEntity } from '../users/entities/user.entity';
       TaskStatusEntity,
       TaskTypeEntity,
       UserEntity,
+      RoleEntity,
     ]),
   ],
 })

@@ -28,6 +28,8 @@ export class RolesController {
   }
 
   @Get(':id')
+  @UseGuards(RoleGuard)
+  @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.rolesService.getById(id);
@@ -35,6 +37,7 @@ export class RolesController {
 
   @Post('create')
   @UsePipes(ValidationPipe)
+  @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async createUser(@Body() rolesDto: RolesDto) {
