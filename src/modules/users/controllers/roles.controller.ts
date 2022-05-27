@@ -24,12 +24,14 @@ export class RolesController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.rolesService.getById(id);
   }
 
   @Post('create')
   @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard('jwt'))
   async createUser(@Body() rolesDto: RolesDto) {
     return this.rolesService.createOne(rolesDto);
   }
