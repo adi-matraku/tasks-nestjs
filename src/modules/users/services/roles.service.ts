@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RolesDto } from '../dtos/roles.dto';
@@ -36,8 +41,15 @@ export class RolesService {
 
   async createOne(roleDto: RolesDto): Promise<Role> {
     try {
-      const role = await this.rolesRepository.save(roleDto);
-      return role as unknown as Role;
+      const roleExists = await this.rolesRepository.findOne({
+        name: roleDto.name,
+      });
+      if (roleExists) {
+        throw new HttpException('Role already exists', HttpStatus.BAD_REQUEST);
+      } else {
+        const role = await this.rolesRepository.save(roleDto);
+        return role as unknown as Role;
+      }
     } catch (error) {
       throw error;
     }
