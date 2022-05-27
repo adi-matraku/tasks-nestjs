@@ -2,6 +2,7 @@ import { TaskEntity } from 'src/modules/tasks/entities/task.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToOne,
   OneToMany,
@@ -45,8 +46,10 @@ export class UserEntity {
   @OneToMany(() => TaskEntity, task => task.id)
   task: TaskEntity[];
 
-  @ManyToOne(() => RoleEntity, role => role.id)
-  @JoinTable()
+  @ManyToOne(() => RoleEntity, role => role.id, {
+    eager: true,
+  })
+  @JoinColumn()
   role: RoleEntity;
 
   async validatePassword(password: string): Promise<boolean> {

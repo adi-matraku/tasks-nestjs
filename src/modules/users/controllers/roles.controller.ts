@@ -12,12 +12,16 @@ import {
 import { RolesDto } from '../dtos/roles.dto';
 import { RolesService } from '../services/roles.service';
 import { AuthGuard } from '@nestjs/passport';
+import { RoleGuard } from '../../auth/guards/role.guard';
+import { Roles } from '../utils/roles.decorator';
 
 @Controller('roles')
 export class RolesController {
   constructor(private rolesService: RolesService) {}
 
   @Get('')
+  @UseGuards(RoleGuard)
+  @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async getAll() {
     return this.rolesService.getAll();
