@@ -68,8 +68,6 @@ export class UsersService {
     }
   }
 
-  async;
-
   ////// FUNCTIONS //////
 
   async findUserByEmail(email: string) {
