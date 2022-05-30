@@ -1,5 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { TaskEntity } from './task.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity('task_status')
 export class TaskStatusEntity {
@@ -11,6 +18,10 @@ export class TaskStatusEntity {
 
   @Column({ default: true })
   isActive: boolean;
+
+  // @Column({ default: null })
+  // @ManyToOne(() => UserEntity, user => user.id)
+  // lastUpdatedBy: UserEntity;
 
   @OneToMany(() => TaskEntity, task => task.id)
   task: TaskEntity[];

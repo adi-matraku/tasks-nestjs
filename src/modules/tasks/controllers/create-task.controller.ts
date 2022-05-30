@@ -53,8 +53,8 @@ export class CreateTaskController {
 
   @Patch(':id')
   @UsePipes(ValidationPipe)
-  // @UseGuards(RoleGuard)
-  // @Roles('admin')
+  @UseGuards(RoleGuard)
+  @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async editOne(
     @Body() editTaskDto: EditTaskDto,

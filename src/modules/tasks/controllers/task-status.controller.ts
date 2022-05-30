@@ -17,6 +17,8 @@ import { TaskStatus } from '../models/task-status.model';
 import { RoleGuard } from '../../auth/guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../../auth/utils/get-user.decorator';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Controller('taskStatus')
 export class TaskStatusController {
@@ -61,7 +63,11 @@ export class TaskStatusController {
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
-  async editOne(@Body() editStatusDto: TaskStatusDto, @Param('id') id: number) {
-    return this.tasksStatusService.editOne(editStatusDto, id);
+  async editOne(
+    @Body() editStatusDto: TaskStatusDto,
+    @Param('id') id: number,
+    @GetUser() user: UserEntity
+  ) {
+    return this.tasksStatusService.editOne(editStatusDto, id, user);
   }
 }
