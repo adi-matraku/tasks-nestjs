@@ -29,10 +29,10 @@ export class UserEntity {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
-  @Column({ default: null })
+  @Column({ default: null, select: false })
   salt: string;
 
   @Column()

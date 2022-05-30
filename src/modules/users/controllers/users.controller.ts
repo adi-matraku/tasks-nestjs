@@ -1,10 +1,12 @@
 import {
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
   ParseIntPipe,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { RoleGuard } from '../../auth/guards/role.guard';
@@ -24,6 +26,7 @@ export class UsersController {
     return this.usersService.getAll();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @UseGuards(RoleGuard)
   @Roles('admin')

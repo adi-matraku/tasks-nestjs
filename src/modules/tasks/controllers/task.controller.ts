@@ -24,7 +24,7 @@ import { User } from '../../auth/models/jwt-payload.interface';
 import { UserEntity } from '../../users/entities/user.entity';
 
 @Controller('tasks')
-export class CreateTaskController {
+export class TaskController {
   constructor(private readonly tasksService: TasksService) {}
 
   //@HttpCode(204)

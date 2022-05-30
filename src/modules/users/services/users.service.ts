@@ -23,6 +23,15 @@ export class UsersService {
       return this.usersRepository.find({
         where: { isActive: true },
         relations: ['role'],
+        select: [
+          'username',
+          'email',
+          'createdAt',
+          'lastName',
+          'firstName',
+          'lastUpdatedAt',
+          'id',
+        ],
       });
     } catch (err) {
       throw err;
@@ -33,11 +42,20 @@ export class UsersService {
     try {
       const user = await this.usersRepository.findOne({
         where: { id: id, isActive: true },
+        select: [
+          'username',
+          'email',
+          'createdAt',
+          'lastName',
+          'firstName',
+          'lastUpdatedAt',
+          'id',
+        ],
       });
       if (!user) {
         throw new NotFoundException('User not Found.');
       }
-      return user as User;
+      return user;
     } catch (err) {
       throw err;
     }
@@ -47,7 +65,7 @@ export class UsersService {
     try {
       await this.checkAuthentication(createUserDto);
       const roleId = await this.checkRole(createUserDto);
-
+      console.log(createUserDto);
       const salt = await bcrypt.genSalt();
       const hashedPassword = await this.hashPassword(
         createUserDto.password,
@@ -60,10 +78,11 @@ export class UsersService {
       user.lastName = createUserDto.lastName;
       user.password = hashedPassword;
       user.role = roleId;
+      user.salt = salt;
       user.lastUpdatedAt = user.createdAt = new Date();
 
       await this.usersRepository.save(user);
-      return user as User;
+      return new User({ ...user, password: undefined, salt: undefined });
     } catch (error) {
       throw error;
     }
@@ -72,7 +91,23 @@ export class UsersService {
   ////// FUNCTIONS //////
 
   async findUserByEmail(email: string) {
-    return this.usersRepository.findOne({ email });
+    return this.usersRepository.findOne(
+      { email },
+      {
+        select: [
+          'username',
+          'lastUpdatedAt',
+          'password',
+          'salt',
+          'id',
+          'email',
+          'isActive',
+          'firstName',
+          'lastName',
+          'createdAt',
+        ],
+      }
+    );
   }
 
   async checkRole(userDto: CreateUserDto): Promise<RoleEntity> {

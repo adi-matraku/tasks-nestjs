@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CreateTaskController } from './controllers/create-task.controller';
+import { TaskController } from './controllers/task.controller';
 import { TasksService } from './services/tasks.service';
 import { TasksStatusService } from './services/tasks-status.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,7 +13,7 @@ import { UserEntity } from '../users/entities/user.entity';
 import { RoleEntity } from '../users/entities/role.entity';
 
 @Module({
-  controllers: [CreateTaskController, TaskStatusController, TaskTypeController],
+  controllers: [TaskController, TaskStatusController, TaskTypeController],
   providers: [TasksService, TasksStatusService, TasksTypeService],
   imports: [
     TypeOrmModule.forFeature([

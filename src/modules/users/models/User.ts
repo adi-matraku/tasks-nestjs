@@ -1,4 +1,5 @@
 import { RoleEntity } from '../entities/role.entity';
+import { Exclude } from 'class-transformer';
 
 export class User {
   username: string;
@@ -9,7 +10,14 @@ export class User {
 
   lastName: string;
 
+  salt: string;
+
+  @Exclude()
   password: string;
 
   role: RoleEntity;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

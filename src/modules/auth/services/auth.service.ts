@@ -12,10 +12,13 @@ export class AuthService {
   ) {}
 
   async validateUser(loginUserDto: LoginUserDto) {
+    debugger;
     console.log('inside validateUserService');
     const user = await this.usersService.findUserByEmail(loginUserDto.email);
+    console.log(user);
     if (user) {
       const matched = comparePasswords(loginUserDto.password, user.password);
+      console.log(matched);
       if (matched) {
         console.log('User Validation Success!');
         console.log(user);

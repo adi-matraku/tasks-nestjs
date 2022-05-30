@@ -29,17 +29,29 @@ export class TasksService {
 
   async getAll(query: queryDto): Promise<TaskQuery> {
     const startRow = (query.pageNumber - 1) * query.pageSize;
-    const where: any = { isActive: true };
-    if (query.name) {
-      where.name = query.name;
-    }
+    // const where: any = { isActive: true };
+    // if (query.name) {
+    //   where.name = query.name;
+    // }
+
+    const where = `(name like '%${query.name}%')`;
+
+    console.log(where);
+    // const data = await this.taskRepository
+    //   .createQueryBuilder('tasks')
+    //   .where({ ...where })
+    //   .take(10)
+    //   .skip(0)
+    //   .select(['tasks.id', 'tasks.name'])
+    //   .leftJoin('tasks.lastUpdatedBy', 'user')
+    //   .getMany();
     const [data, total] = await this.taskRepository.findAndCount({
       take: query.pageSize,
       skip: startRow,
       where,
       relations: ['status', 'type', 'lastUpdatedBy'],
     });
-    console.log(startRow);
+
     return {
       data,
       meta: {
