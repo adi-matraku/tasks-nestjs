@@ -20,16 +20,16 @@ export class RolesController {
   constructor(private rolesService: RolesService) {}
 
   @Get('')
-  @UseGuards(RoleGuard)
-  @Roles('admin')
+  // @UseGuards(RoleGuard)
+  // @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async getAll() {
     return this.rolesService.getAll();
   }
 
   @Get(':id')
-  @UseGuards(RoleGuard)
-  @Roles('admin')
+  // @UseGuards(RoleGuard)
+  // @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.rolesService.getById(id);
