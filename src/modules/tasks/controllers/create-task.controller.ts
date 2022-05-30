@@ -19,6 +19,9 @@ import { EditTaskDto } from '../dtos/edit-task.dto';
 import { RoleGuard } from '../../auth/guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../../auth/utils/get-user.decorator';
+import { User } from '../../auth/models/jwt-payload.interface';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Controller('tasks')
 export class CreateTaskController {
@@ -50,11 +53,15 @@ export class CreateTaskController {
 
   @Patch(':id')
   @UsePipes(ValidationPipe)
-  @UseGuards(RoleGuard)
-  @Roles('admin')
+  // @UseGuards(RoleGuard)
+  // @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
-  async editOne(@Body() editTaskDto: EditTaskDto, @Param('id') id: number) {
-    return this.tasksService.editOne(editTaskDto, id);
+  async editOne(
+    @Body() editTaskDto: EditTaskDto,
+    @Param('id') id: number,
+    @GetUser() user: UserEntity
+  ) {
+    return this.tasksService.editOne(editTaskDto, id, user);
   }
 
   @Patch('status/:id')

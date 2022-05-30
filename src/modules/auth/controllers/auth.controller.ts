@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -9,6 +10,9 @@ import { CreateUserDto } from '../../users/dtos/createUser.dto';
 import { UsersService } from '../../users/services/users.service';
 import { AuthService } from '../services/auth.service';
 import { LoginUserDto } from '../../users/dtos/loginUser.dto';
+import { RoleGuard } from '../guards/role.guard';
+import { Roles } from '../../users/utils/roles.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +23,9 @@ export class AuthController {
 
   @Post('create')
   @UsePipes(ValidationPipe)
+  @UseGuards(RoleGuard)
+  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'))
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createOne(createUserDto);
   }

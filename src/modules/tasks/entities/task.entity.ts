@@ -10,6 +10,7 @@ import { TaskStatusEntity } from './task-status.entity';
 import { TaskTypeEntity } from './task-type.entity';
 import { Exclude } from 'class-transformer';
 import { UserEntity } from '../../users/entities/user.entity';
+import { User } from '../../auth/models/jwt-payload.interface';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -32,8 +33,9 @@ export class TaskEntity {
   @Column({ default: null })
   lastUpdatedAt: Date;
 
-  @Column({ default: null })
-  lastUpdatedBy: Date;
+  // @Column({ default: null })
+  @ManyToOne(() => UserEntity, user => user.id)
+  lastUpdatedBy: UserEntity;
 
   @ManyToOne(() => TaskStatusEntity, status => status.id)
   status: TaskStatusEntity;

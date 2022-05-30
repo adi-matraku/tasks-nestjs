@@ -12,6 +12,7 @@ import { queryDto } from '../dtos/query.dto';
 import { EditTaskDto } from '../dtos/edit-task.dto';
 import { TaskQuery } from '../models/task-query.model';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { User } from '../../auth/models/jwt-payload.interface';
 
 @Injectable()
 export class TasksService {
@@ -36,7 +37,7 @@ export class TasksService {
       take: query.pageSize,
       skip: startRow,
       where,
-      relations: ['status', 'type'],
+      relations: ['status', 'type', 'lastUpdatedBy'],
     });
     console.log(startRow);
     return {
@@ -96,12 +97,18 @@ export class TasksService {
     }
   }
 
-  async editOne(editTaskDto: EditTaskDto, id: number): Promise<Task> {
+  async editOne(
+    editTaskDto: EditTaskDto,
+    id: number,
+    user: UserEntity
+  ): Promise<Task> {
     try {
       const task = await this.taskRepository.findOne({
         where: { id: id, isActive: true },
         relations: ['status', 'type'],
       });
+      console.log('UERRRR', user);
+
       if (!task) {
         throw new NotFoundException('Task not found');
       }
@@ -141,6 +148,7 @@ export class TasksService {
       task.name = editTaskDto?.name;
       task.description = editTaskDto?.description;
       task.lastUpdatedAt = new Date();
+      task.lastUpdatedBy = user;
 
       await this.taskRepository.save(task);
       return task as Task;
