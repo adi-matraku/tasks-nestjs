@@ -5,6 +5,7 @@ import { TaskTypeEntity } from '../entities/task-type.entity';
 import { TaskTypeDto } from '../dtos/taskType.dto';
 import { TaskType } from '../models/task-type.model';
 import { NotFoundException } from '../utils/not-found.exception';
+import { ConflictException } from '../../auth/exceptions/Conflict.exception';
 
 @Injectable()
 export class TasksTypeService {
@@ -37,6 +38,12 @@ export class TasksTypeService {
 
   async createOne(taskTypeDto: TaskTypeDto): Promise<TaskType> {
     try {
+      const taskTypeUsed = await this.taskTypeRepository.findOne({
+        where: { name: taskTypeDto.name, isActive: true },
+      });
+      if (taskTypeUsed) {
+        throw new ConflictException('Task Type already exists');
+      }
       const taskType = await this.taskTypeRepository.save(taskTypeDto);
       return taskType as unknown as TaskType;
     } catch (error) {
@@ -46,6 +53,12 @@ export class TasksTypeService {
 
   async editOne(editStatusDto: TaskTypeDto, id: number): Promise<TaskType> {
     try {
+      const taskTypeUsed = await this.taskTypeRepository.findOne({
+        where: { name: editStatusDto.name, isActive: true },
+      });
+      if (taskTypeUsed) {
+        throw new ConflictException('Task Type already exists');
+      }
       const type = await this.taskTypeRepository.findOne({
         where: { id: id, isActive: true },
       });
