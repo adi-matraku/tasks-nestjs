@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from '../entities/task.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { TaskStatusEntity } from '../entities/task-status.entity';
 import { TaskTypeEntity } from '../entities/task-type.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
@@ -12,7 +12,6 @@ import { queryDto } from '../dtos/query.dto';
 import { EditTaskDto } from '../dtos/edit-task.dto';
 import { TaskQuery } from '../models/task-query.model';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { User } from '../../auth/models/jwt-payload.interface';
 
 @Injectable()
 export class TasksService {
@@ -27,28 +26,54 @@ export class TasksService {
     private readonly usersRepository: Repository<UserEntity>
   ) {}
 
-  async getAll(query: queryDto): Promise<TaskQuery> {
+  async getAll(query: queryDto): Promise<any> {
     const startRow = (query.pageNumber - 1) * query.pageSize;
-    // const where: any = { isActive: true };
+
+    // let where: any = {};
     // if (query.name) {
-    //   where.name = query.name;
+    //   where = {
+    //     isActive: true,
+    //     name: query.name ? Like('' + query.name + ' #%') : undefined,
+    //   };
     // }
 
-    const where = `(name like '%${query.name}%')`;
+    let where = [];
 
-    console.log(where);
-    // const data = await this.taskRepository
-    //   .createQueryBuilder('tasks')
-    //   .where({ ...where })
-    //   .take(10)
-    //   .skip(0)
-    //   .select(['tasks.id', 'tasks.name'])
-    //   .leftJoin('tasks.lastUpdatedBy', 'user')
-    //   .getMany();
+    if (query.name && query.description) {
+      console.log('both');
+      where = [
+        {
+          name: Like('%' + query.name + '%'),
+          description: Like('%' + query.description + '%'),
+        },
+      ];
+    }
+
+    if (
+      (query.name && !query.description) ||
+      (!query.name && query.description)
+    ) {
+      console.log('one');
+      where = [
+        {
+          name: Like('%' + query.name + '%'),
+        },
+        {
+          description: Like('%' + query.description + '%'),
+        },
+      ];
+    }
+    //
+    // Object.keys(where).forEach(key =>
+    //   where[key] === undefined ? delete where[key] : {}
+    // );
+
+    // console.log(where.name);
+
     const [data, total] = await this.taskRepository.findAndCount({
       take: query.pageSize,
       skip: startRow,
-      where,
+      where: where,
       relations: ['status', 'type', 'lastUpdatedBy'],
     });
 
@@ -56,11 +81,100 @@ export class TasksService {
       data,
       meta: {
         total,
-        pageSize: query.pageSize,
-        pageNumber: query.pageNumber,
+        pageSize: query.pageSize || 10,
+        pageNumber: query.pageNumber || 1,
       },
     };
+    // const where: any = { isActive: true };
+    // if (query.name) {
+    //   where.name = query.name;
+    // }
+    // const where = `(tasks.name like '%${query.name}%')`;
+    // const where = `("tasks.name like :name", { name:'%${query.name}%' })`;
+
+    // console.log('where', where);
   }
+
+  // async getFiltered(query: queryDto): Promise<any> {
+  //   const startRow = (query.pageNumber - 1) * query.pageSize;
+  //   const data = await this.taskRepository
+  //     .createQueryBuilder('tasks')
+  //     .select('tasks')
+  //     .leftJoinAndSelect('tasks.status', 'status')
+  //     .leftJoinAndSelect('tasks.type', 'type')
+  //     .leftJoinAndSelect('tasks.lastUpdatedBy', 'lastUpdatedBy')
+  //     .where('tasks.name like :name', { name: `%${query.name}%` })
+  //     .andWhere('tasks.description like :description', {
+  //       description: `%${query.description}%`,
+  //     })
+  //     .take(query.pageSize || 10)
+  //     .skip(startRow || 0)
+  //     .getMany();
+  //
+  //   return {
+  //     data,
+  //     meta: {
+  //       pageSize: query.pageSize,
+  //       pageNumber: query.pageNumber,
+  //     },
+  //   };
+  // }
+
+  // async getFiltered(query: queryDto): Promise<any> {
+  //   const take = query.pageSize || 10;
+  //   const skip = (query.pageNumber - 1) * query.pageSize || 0;
+  //   const name = query.name || '';
+  //
+  //   if (query.name && query.description) {
+  //     const queryBuilder = await this.taskRepository.createQueryBuilder(
+  //       'tasks'
+  //     );
+  //
+  //     const data = await queryBuilder
+  //       .select('tasks')
+  //       .leftJoinAndSelect('tasks.status', 'status')
+  //       .leftJoinAndSelect('tasks.type', 'type')
+  //       .leftJoinAndSelect('tasks.lastUpdatedBy', 'lastUpdatedBy')
+  //       .where('tasks.name like :name', { name: `%${query.name}%` })
+  //       .andWhere('tasks.description like :description', {
+  //         description: `%${query.description}%`,
+  //       })
+  //       .skip(skip)
+  //       .take(take)
+  //       .getMany();
+  //
+  //     const itemCount = await queryBuilder.getCount();
+  //
+  //     return {
+  //       data,
+  //       itemCount,
+  //     };
+  //   }
+  //
+  //   if (query.name) {
+  //     return await this.queryData(query, query.name);
+  //   }
+  // }
+  //
+  // async queryData(query: queryDto, property: string) {
+  //   const take = query.pageSize || 10;
+  //   const skip = (query.pageNumber - 1) * query.pageSize || 0;
+  //
+  //   const [data] = await this.taskRepository.findAndCount({
+  //     where: { name: Like('%' + property + '%') },
+  //     relations: ['status', 'type', 'lastUpdatedBy'],
+  //     take: take,
+  //     skip: skip,
+  //   });
+  //
+  //   return {
+  //     data,
+  //     meta: {
+  //       pageSize: query.pageSize,
+  //       pageNumber: query.pageNumber,
+  //     },
+  //   };
+  // }
 
   async createOne(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
@@ -119,7 +233,6 @@ export class TasksService {
         where: { id: id, isActive: true },
         relations: ['status', 'type'],
       });
-      console.log('UERRRR', user);
 
       if (!task) {
         throw new NotFoundException('Task not found');

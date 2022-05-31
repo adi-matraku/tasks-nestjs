@@ -10,4 +10,6 @@ export class queryDto {
   @IsString()
   @IsOptional()
   name: string;
+  @IsOptional()
+  description: string;
 }

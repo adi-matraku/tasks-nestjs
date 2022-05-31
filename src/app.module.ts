@@ -19,6 +19,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
       username: 'root',
       password: 'Bewzing4321',
       database: 'tasks_db',
+      // debug: true,
       autoLoadEntities: true,
     }),
     TasksModule,

@@ -20,25 +20,17 @@ import { RoleGuard } from '../../auth/guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../auth/utils/get-user.decorator';
-import { User } from '../../auth/models/jwt-payload.interface';
 import { UserEntity } from '../../users/entities/user.entity';
 
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly tasksService: TasksService) {}
 
-  //@HttpCode(204)
-  //    @Param('pageNumber') pageNumber: number,
-  //     @Param('pageSize') pageSize: number,
-  //     @Param('statusId') statusId: number,
-  //     @Param('name') name: string,
-  //     @Param('description') description: string
   @Get('')
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   async getAll(@Query() query: queryDto) {
-    console.log(query);
     return this.tasksService.getAll(query);
   }
 
