@@ -13,6 +13,7 @@ import { LoginUserDto } from '../../users/dtos/loginUser.dto';
 import { RoleGuard } from '../guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('accessToken')
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createOne(createUserDto);
   }

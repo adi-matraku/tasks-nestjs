@@ -31,6 +31,7 @@ export class TaskController {
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('accessToken')
   async getAll(@Query() query: queryDto) {
     return this.tasksService.getAll(query);
   }
@@ -64,6 +65,7 @@ export class TaskController {
   @Roles('user')
   @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
+  @ApiBearerAuth('accessToken')
   async editStatus(@Body() editStatusDto: statusDto, @Param('id') id: number) {
     return this.tasksService.editStatus(editStatusDto, id);
   }
