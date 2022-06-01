@@ -3,6 +3,8 @@ import { UsersService } from '../../users/services/users.service';
 import { LoginUserDto } from '../../users/dtos/loginUser.dto';
 import { comparePasswords } from '../utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import * as crypto from 'crypto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +26,9 @@ export class AuthService {
         const { id } = user;
         const payload = { id };
         const accessToken = this.jwtService.sign(payload);
-        return { accessToken };
+        const refreshToken = await this.generateToken();
+
+        return { accessToken, refreshToken };
       } else {
         throw new HttpException(
           'User Credentials are wrong.',
@@ -35,4 +39,9 @@ export class AuthService {
       throw new HttpException('User does not exist.', HttpStatus.BAD_REQUEST);
     }
   }
+
+  generateToken = (): Promise<string> =>
+    new Promise(resolve =>
+      randomBytes(48, (err, buffer) => resolve(buffer.toString('hex')))
+    );
 }
