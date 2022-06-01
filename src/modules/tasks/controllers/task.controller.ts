@@ -50,6 +50,7 @@ export class TaskController {
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('accessToken')
   async editOne(
     @Body() editTaskDto: EditTaskDto,
     @Param('id') id: number,
@@ -59,6 +60,9 @@ export class TaskController {
   }
 
   @Patch('status/:id')
+  @UseGuards(RoleGuard)
+  @Roles('user')
+  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   async editStatus(@Body() editStatusDto: statusDto, @Param('id') id: number) {
     return this.tasksService.editStatus(editStatusDto, id);
@@ -69,6 +73,7 @@ export class TaskController {
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('accessToken')
   async deleteOne(@Param('id') id: number) {
     return this.tasksService.deleteOne(id);
   }
