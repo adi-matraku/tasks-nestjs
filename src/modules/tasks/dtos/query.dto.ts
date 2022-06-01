@@ -12,4 +12,16 @@ export class queryDto {
   name: string;
   @IsOptional()
   description: string;
+  @IsOptional()
+  fromCreatedAt: Date | string;
+  @IsOptional()
+  toCreatedAt: Date | string;
+  @IsOptional()
+  users: string;
+  @IsOptional()
+  lastUpdatedBy: string;
+  @IsOptional()
+  statuses: string;
+  @IsOptional()
+  types: string;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from '../entities/task.entity';
-import { Like, Repository } from 'typeorm';
+import { Between, In, Like, Repository } from 'typeorm';
 import { TaskStatusEntity } from '../entities/task-status.entity';
 import { TaskTypeEntity } from '../entities/task-type.entity';
 import { CreateTaskDto } from '../dtos/create-task.dto';
@@ -27,55 +27,39 @@ export class TasksService {
   ) {}
 
   async getAll(query: queryDto): Promise<any> {
-    const startRow = (query.pageNumber - 1) * query.pageSize;
+    const skip = (query.pageNumber - 1) * query.pageSize;
 
-    // let where: any = {};
-    // if (query.name) {
-    //   where = {
-    //     isActive: true,
-    //     name: query.name ? Like('' + query.name + ' #%') : undefined,
-    //   };
-    // }
-
-    let where = [];
-
-    if (query.name && query.description) {
-      console.log('both');
-      where = [
-        {
-          name: Like('%' + query.name + '%'),
-          description: Like('%' + query.description + '%'),
-        },
-      ];
+    const where: any = { isActive: true };
+    if (query.description) {
+      where.description = Like('%' + query.description + '%');
     }
-
-    if (
-      (query.name && !query.description) ||
-      (!query.name && query.description)
-    ) {
-      console.log('one');
-      where = [
-        {
-          name: Like('%' + query.name + '%'),
-        },
-        {
-          description: Like('%' + query.description + '%'),
-        },
-      ];
+    if (query.name) {
+      where.name = Like('%' + query.name + '%');
     }
-
-    //
-    // Object.keys(where).forEach(key =>
-    //   where[key] === undefined ? delete where[key] : {}
-    // );
-
-    // console.log(where.name);
+    if (query.fromCreatedAt && query.toCreatedAt) {
+      where.createdAt = Between(query.fromCreatedAt, query.toCreatedAt);
+    }
+    if (query.users) {
+      const users = query.users.split(',') ?? [];
+      where.user = In(users);
+    }
+    if (query.statuses) {
+      const statuses = query.statuses.split(',') ?? [];
+      where.status = In(statuses);
+    }
+    if (query.types) {
+      const types = query.types.split(',') ?? [];
+      where.type = In(types);
+    }
+    if (query.lastUpdatedBy) {
+      where.lastUpdatedBy = query.lastUpdatedBy;
+    }
 
     const [data, total] = await this.taskRepository.findAndCount({
       take: query.pageSize,
-      skip: startRow,
-      where: where,
-      relations: ['status', 'type', 'lastUpdatedBy'],
+      skip,
+      where,
+      relations: ['status', 'type', 'lastUpdatedBy', 'user'],
     });
 
     return {
@@ -86,96 +70,7 @@ export class TasksService {
         pageNumber: query.pageNumber || 1,
       },
     };
-    // const where: any = { isActive: true };
-    // if (query.name) {
-    //   where.name = query.name;
-    // }
-    // const where = `(tasks.name like '%${query.name}%')`;
-    // const where = `("tasks.name like :name", { name:'%${query.name}%' })`;
-
-    // console.log('where', where);
   }
-
-  // async getFiltered(query: queryDto): Promise<any> {
-  //   const startRow = (query.pageNumber - 1) * query.pageSize;
-  //   const data = await this.taskRepository
-  //     .createQueryBuilder('tasks')
-  //     .select('tasks')
-  //     .leftJoinAndSelect('tasks.status', 'status')
-  //     .leftJoinAndSelect('tasks.type', 'type')
-  //     .leftJoinAndSelect('tasks.lastUpdatedBy', 'lastUpdatedBy')
-  //     .where('tasks.name like :name', { name: `%${query.name}%` })
-  //     .andWhere('tasks.description like :description', {
-  //       description: `%${query.description}%`,
-  //     })
-  //     .take(query.pageSize || 10)
-  //     .skip(startRow || 0)
-  //     .getMany();
-  //
-  //   return {
-  //     data,
-  //     meta: {
-  //       pageSize: query.pageSize,
-  //       pageNumber: query.pageNumber,
-  //     },
-  //   };
-  // }
-
-  // async getFiltered(query: queryDto): Promise<any> {
-  //   const take = query.pageSize || 10;
-  //   const skip = (query.pageNumber - 1) * query.pageSize || 0;
-  //   const name = query.name || '';
-  //
-  //   if (query.name && query.description) {
-  //     const queryBuilder = await this.taskRepository.createQueryBuilder(
-  //       'tasks'
-  //     );
-  //
-  //     const data = await queryBuilder
-  //       .select('tasks')
-  //       .leftJoinAndSelect('tasks.status', 'status')
-  //       .leftJoinAndSelect('tasks.type', 'type')
-  //       .leftJoinAndSelect('tasks.lastUpdatedBy', 'lastUpdatedBy')
-  //       .where('tasks.name like :name', { name: `%${query.name}%` })
-  //       .andWhere('tasks.description like :description', {
-  //         description: `%${query.description}%`,
-  //       })
-  //       .skip(skip)
-  //       .take(take)
-  //       .getMany();
-  //
-  //     const itemCount = await queryBuilder.getCount();
-  //
-  //     return {
-  //       data,
-  //       itemCount,
-  //     };
-  //   }
-  //
-  //   if (query.name) {
-  //     return await this.queryData(query, query.name);
-  //   }
-  // }
-  //
-  // async queryData(query: queryDto, property: string) {
-  //   const take = query.pageSize || 10;
-  //   const skip = (query.pageNumber - 1) * query.pageSize || 0;
-  //
-  //   const [data] = await this.taskRepository.findAndCount({
-  //     where: { name: Like('%' + property + '%') },
-  //     relations: ['status', 'type', 'lastUpdatedBy'],
-  //     take: take,
-  //     skip: skip,
-  //   });
-  //
-  //   return {
-  //     data,
-  //     meta: {
-  //       pageSize: query.pageSize,
-  //       pageNumber: query.pageNumber,
-  //     },
-  //   };
-  // }
 
   async createOne(createTaskDto: CreateTaskDto): Promise<Task> {
     try {

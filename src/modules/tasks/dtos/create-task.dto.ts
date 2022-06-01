@@ -1,10 +1,5 @@
-import {
-  ArrayNotEmpty,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsNumber, IsString } from 'nestjs-swagger-dto';
+import { ArrayNotEmpty, IsNotEmpty, MinLength } from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -14,6 +9,7 @@ export class CreateTaskDto {
 
   @IsNotEmpty()
   @MinLength(4)
+  @IsString()
   description: string;
 
   @IsNotEmpty()
