@@ -12,7 +12,6 @@ export class AuthService {
   ) {}
 
   async validateUser(loginUserDto: LoginUserDto) {
-    debugger;
     console.log('inside validateUserService');
     const user = await this.usersService.findUserByEmail(loginUserDto.email);
     console.log(user);
