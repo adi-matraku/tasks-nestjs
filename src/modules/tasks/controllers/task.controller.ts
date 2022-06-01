@@ -21,6 +21,7 @@ import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../auth/utils/get-user.decorator';
 import { UserEntity } from '../../users/entities/user.entity';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('tasks')
 export class TaskController {
@@ -39,6 +40,7 @@ export class TaskController {
   @UseGuards(RoleGuard)
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('accessToken')
   async createOne(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.createOne(createTaskDto);
   }

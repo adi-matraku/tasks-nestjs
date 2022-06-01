@@ -12,6 +12,10 @@ async function bootstrap() {
     .setTitle('Task')
     .setDescription('The task')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'Bearer', bearerFormat: 'Token' },
+      'accessToken'
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
