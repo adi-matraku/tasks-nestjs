@@ -21,7 +21,7 @@ import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../auth/utils/get-user.decorator';
 import { UserEntity } from '../../users/entities/user.entity';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('tasks')
 export class TaskController {
@@ -32,6 +32,7 @@ export class TaskController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks')
   async getAll(@Query() query: queryDto) {
     return this.tasksService.getAll(query);
   }
@@ -42,6 +43,7 @@ export class TaskController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks')
   async createOne(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.createOne(createTaskDto);
   }
@@ -52,6 +54,7 @@ export class TaskController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks')
   async editOne(
     @Body() editTaskDto: EditTaskDto,
     @Param('id') id: number,
@@ -66,6 +69,7 @@ export class TaskController {
   @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks')
   async editStatus(@Body() editStatusDto: statusDto, @Param('id') id: number) {
     return this.tasksService.editStatus(editStatusDto, id);
   }
@@ -76,6 +80,7 @@ export class TaskController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks')
   async deleteOne(@Param('id') id: number) {
     return this.tasksService.deleteOne(id);
   }

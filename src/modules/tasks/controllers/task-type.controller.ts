@@ -17,7 +17,7 @@ import { TaskTypeDto } from '../dtos/taskType.dto';
 import { RoleGuard } from '../../auth/guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('taskType')
 export class TaskTypeController {
@@ -28,6 +28,7 @@ export class TaskTypeController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks type')
   async getAll() {
     return this.tasksTypeService.getAll();
   }
@@ -37,6 +38,7 @@ export class TaskTypeController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks type')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.tasksTypeService.getById(id);
   }
@@ -47,6 +49,7 @@ export class TaskTypeController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks type')
   async createTask(@Body() taskType: TaskTypeDto): Promise<TaskType> {
     return this.tasksTypeService.createOne(taskType);
   }
@@ -57,6 +60,7 @@ export class TaskTypeController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks type')
   async editOne(@Body() editTypeDto: TaskTypeDto, @Param('id') id: number) {
     return this.tasksTypeService.editOne(editTypeDto, id);
   }
@@ -67,6 +71,7 @@ export class TaskTypeController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks type')
   async deleteOne(@Param('id') id: number) {
     return this.tasksTypeService.deleteOne(id);
   }

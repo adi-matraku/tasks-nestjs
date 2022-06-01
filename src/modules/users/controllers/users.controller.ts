@@ -12,7 +12,7 @@ import { UsersService } from '../services/users.service';
 import { RoleGuard } from '../../auth/guards/role.guard';
 import { Roles } from '../utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +23,7 @@ export class UsersController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('users')
   async getAll(@Query('username') username: string) {
     console.log(username);
     return this.usersService.getAll();
@@ -34,6 +35,7 @@ export class UsersController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('users')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getById(id);
   }

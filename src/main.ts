@@ -9,9 +9,14 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   console.log(process.env.JWTSECRET);
   const config = new DocumentBuilder()
-    .setTitle('Task')
-    .setDescription('The task')
+    .setTitle('Tasks Project')
+    .setDescription('Tasks')
     .setVersion('1.0')
+    .addTag('tasks')
+    .addTag('tasks status')
+    .addTag('tasks type')
+    .addTag('users')
+    .addTag('roles')
     .addBearerAuth(
       { type: 'http', scheme: 'Bearer', bearerFormat: 'Token' },
       'accessToken'

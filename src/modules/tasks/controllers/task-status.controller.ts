@@ -19,7 +19,7 @@ import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../auth/utils/get-user.decorator';
 import { UserEntity } from '../../users/entities/user.entity';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('taskStatus')
 export class TaskStatusController {
@@ -30,6 +30,7 @@ export class TaskStatusController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks status')
   async getAll() {
     return this.tasksStatusService.getAll();
   }
@@ -39,6 +40,7 @@ export class TaskStatusController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks status')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.tasksStatusService.getById(id);
   }
@@ -49,6 +51,7 @@ export class TaskStatusController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks status')
   async createTask(@Body() taskStatus: TaskStatusDto): Promise<TaskStatus> {
     return this.tasksStatusService.createOne(taskStatus);
   }
@@ -59,6 +62,7 @@ export class TaskStatusController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks status')
   async deleteOne(@Param('id') id: number) {
     return this.tasksStatusService.deleteOne(id);
   }
@@ -69,6 +73,7 @@ export class TaskStatusController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('tasks status')
   async editOne(
     @Body() editStatusDto: TaskStatusDto,
     @Param('id') id: number,

@@ -13,7 +13,7 @@ import { LoginUserDto } from '../../users/dtos/loginUser.dto';
 import { RoleGuard } from '../guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -28,11 +28,13 @@ export class AuthController {
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
+  @ApiTags('users')
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createOne(createUserDto);
   }
 
   @Post('login')
+  @ApiTags('users')
   async login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.validateUser(loginUserDto);
   }
