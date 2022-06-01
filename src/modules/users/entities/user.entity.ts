@@ -3,14 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleEntity } from './role.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity('user')
 export class UserEntity {

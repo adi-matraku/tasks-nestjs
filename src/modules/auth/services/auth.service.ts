@@ -19,7 +19,7 @@ export class AuthService {
       const matched = comparePasswords(loginUserDto.password, user.password);
       console.log(matched);
       if (matched) {
-        console.log('User Validation Success!');
+        console.log('User Validation Success! Inside Auth Service');
         console.log(user);
         const { id } = user;
         const payload = { id };
