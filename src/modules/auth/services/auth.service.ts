@@ -1,16 +1,30 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import { LoginUserDto } from '../../users/dtos/loginUser.dto';
 import { comparePasswords } from '../utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import * as crypto from 'crypto';
-import { randomBytes } from 'crypto';
+import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
+import { Repository } from 'typeorm';
+import { RefreshTokenEntity } from '../entities/refresh-token.entity';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { JwtPayloadInterface } from '../models/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    @InjectRepository(RefreshTokenEntity)
+    private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>
   ) {}
 
   async validateUser(loginUserDto: LoginUserDto) {
@@ -21,12 +35,16 @@ export class AuthService {
       const matched = comparePasswords(loginUserDto.password, user.password);
       console.log(matched);
       if (matched) {
-        console.log('User Validation Success! Inside Auth Service');
+        // console.log('User Validation Success! Inside Auth Service');
         console.log(user);
         const { id } = user;
         const payload = { id };
-        const accessToken = this.jwtService.sign(payload);
-        const refreshToken = await this.generateToken();
+        console.log('payload', payload);
+        const accessToken = this.jwtService.sign(payload, { expiresIn: 12 });
+        const refreshToken = await this.hashData(user.username);
+        const tokenDb = new RefreshTokenEntity();
+        tokenDb.refresh_token = refreshToken;
+        await this.refreshTokenRepository.save(tokenDb);
 
         return { accessToken, refreshToken };
       } else {
@@ -40,8 +58,43 @@ export class AuthService {
     }
   }
 
-  generateToken = (): Promise<string> =>
-    new Promise(resolve =>
-      randomBytes(48, (err, buffer) => resolve(buffer.toString('hex')))
-    );
+  async checkRefreshToken(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { refreshToken } = refreshTokenDto;
+      console.log(refreshToken);
+      const decodedData = this.jwtService.decode(refreshTokenDto.accessToken);
+      const id = decodedData['id'];
+      const payload = { id };
+
+      const token = await this.refreshTokenRepository.findOne({
+        refresh_token: refreshToken,
+      });
+
+      const user = await this.usersRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      if (token) {
+        const newAccessToken = this.jwtService.sign(payload, {
+          expiresIn: 15,
+        });
+        const refreshToken = await this.hashData(user.username);
+        const tokenDb = new RefreshTokenEntity();
+        tokenDb.refresh_token = refreshToken;
+        await this.refreshTokenRepository.save(tokenDb);
+
+        return { newAccessToken, refreshToken };
+      } else {
+        throw new UnauthorizedException();
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  hashData(data: string) {
+    return bcrypt.hash(data, 10);
+  }
 }

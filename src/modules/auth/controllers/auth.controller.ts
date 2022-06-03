@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -14,6 +15,7 @@ import { RoleGuard } from '../guards/role.guard';
 import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -37,5 +39,11 @@ export class AuthController {
   @ApiTags('users')
   async login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.validateUser(loginUserDto);
+  }
+
+  @Post('refresh')
+  @ApiTags('users')
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.checkRefreshToken(refreshTokenDto);
   }
 }

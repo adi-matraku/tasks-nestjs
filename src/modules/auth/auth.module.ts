@@ -8,12 +8,12 @@ import { JwtStrategy } from './utils/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../users/entities/user.entity';
 import { RoleEntity } from '../users/entities/role.entity';
-import { RoleGuard } from './guards/role.guard';
+import { RefreshTokenEntity } from './entities/refresh-token.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([UserEntity, RoleEntity]),
+    TypeOrmModule.forFeature([UserEntity, RoleEntity, RefreshTokenEntity]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWTSECRET || 'Secretsecret',

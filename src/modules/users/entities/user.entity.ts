@@ -5,10 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleEntity } from './role.entity';
+import { RefreshTokenEntity } from '../../auth/entities/refresh-token.entity';
 
 @Entity('user')
 export class UserEntity {
