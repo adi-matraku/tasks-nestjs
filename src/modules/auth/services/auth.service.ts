@@ -15,6 +15,7 @@ import { Repository } from 'typeorm';
 import { RefreshTokenEntity } from '../entities/refresh-token.entity';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { JwtPayloadInterface } from '../models/jwt-payload.interface';
+import { DeleteRefreshTokenDto } from '../dtos/delete-refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -35,12 +36,11 @@ export class AuthService {
       const matched = comparePasswords(loginUserDto.password, user.password);
       console.log(matched);
       if (matched) {
-        // console.log('User Validation Success! Inside Auth Service');
         console.log(user);
         const { id } = user;
         const payload = { id };
         console.log('payload', payload);
-        const accessToken = this.jwtService.sign(payload, { expiresIn: 12 });
+        const accessToken = this.jwtService.sign(payload, { expiresIn: 15 });
         const refreshToken = await this.hashData(user.username);
         const tokenDb = new RefreshTokenEntity();
         tokenDb.refresh_token = refreshToken;
@@ -86,6 +86,23 @@ export class AuthService {
         await this.refreshTokenRepository.save(tokenDb);
 
         return { newAccessToken, refreshToken };
+      } else {
+        throw new UnauthorizedException();
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async logout(refreshTokenDto: DeleteRefreshTokenDto) {
+    try {
+      const refreshToken = await this.refreshTokenRepository.findOne({
+        where: { refresh_token: refreshTokenDto.refreshToken },
+      });
+
+      console.log(refreshToken);
+      if (refreshToken) {
+        await this.refreshTokenRepository.delete(refreshToken.id);
       } else {
         throw new UnauthorizedException();
       }

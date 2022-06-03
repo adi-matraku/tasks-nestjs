@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Post,
   Req,
   UseGuards,
@@ -16,6 +17,7 @@ import { Roles } from '../../users/utils/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { DeleteRefreshTokenDto } from '../dtos/delete-refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -45,5 +47,11 @@ export class AuthController {
   @ApiTags('users')
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.checkRefreshToken(refreshTokenDto);
+  }
+
+  @Post('logout')
+  @ApiTags('users')
+  async logout(@Body() deleteRefreshToken: DeleteRefreshTokenDto) {
+    return this.authService.logout(deleteRefreshToken);
   }
 }

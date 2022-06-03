@@ -5,6 +5,6 @@ export class RefreshTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   refresh_token: string;
 }
