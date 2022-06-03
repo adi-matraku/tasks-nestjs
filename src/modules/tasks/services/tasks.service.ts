@@ -26,7 +26,7 @@ export class TasksService {
     private readonly usersRepository: Repository<UserEntity>
   ) {}
 
-  async getAll(query: queryDto): Promise<any> {
+  async getAll(query: queryDto): Promise<TaskQuery> {
     const skip = (query.pageNumber - 1) * query.pageSize;
 
     const where: any = { isActive: true };
