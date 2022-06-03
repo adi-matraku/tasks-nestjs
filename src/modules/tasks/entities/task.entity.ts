@@ -10,7 +10,6 @@ import { TaskStatusEntity } from './task-status.entity';
 import { TaskTypeEntity } from './task-type.entity';
 import { Exclude } from 'class-transformer';
 import { UserEntity } from '../../users/entities/user.entity';
-import { User } from '../../auth/models/jwt-payload.interface';
 
 @Entity('tasks')
 export class TaskEntity {

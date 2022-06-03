@@ -21,9 +21,10 @@ export class RolesController {
   constructor(private rolesService: RolesService) {}
 
   @Get('')
-  // @UseGuards(RoleGuard)
-  // @Roles('admin')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RoleGuard)
+  @Roles('admin', 'user')
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AuthGuard('jwt'))
   @ApiTags('roles')
   async getAll() {
     return this.rolesService.getAll();
