@@ -65,7 +65,7 @@ export class TaskController {
 
   @Patch('status/:id')
   @UseGuards(RoleGuard)
-  @Roles('user')
+  @Roles('admin', 'user')
   @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   @ApiBearerAuth('accessToken')
