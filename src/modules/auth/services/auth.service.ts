@@ -16,6 +16,7 @@ import { RefreshTokenEntity } from '../entities/refresh-token.entity';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { JwtPayloadInterface } from '../models/jwt-payload.interface';
 import { DeleteRefreshTokenDto } from '../dtos/delete-refresh-token.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,7 @@ export class AuthService {
   ) {}
 
   async validateUser(loginUserDto: LoginUserDto) {
-    console.log('inside validateUserService');
+    // console.log('inside validateUserService');
     const user = await this.usersService.findUserByEmail(loginUserDto.email);
     console.log(user);
     if (user) {
@@ -109,6 +110,10 @@ export class AuthService {
     } catch (err) {
       throw err;
     }
+  }
+
+  getUser(req: Request) {
+    return req.user;
   }
 
   hashData(data: string) {

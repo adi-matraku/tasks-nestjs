@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Post,
   Req,
   UseGuards,
@@ -53,5 +54,15 @@ export class AuthController {
   @ApiTags('users')
   async logout(@Body() deleteRefreshToken: DeleteRefreshTokenDto) {
     return this.authService.logout(deleteRefreshToken);
+  }
+
+  @Get('me')
+  @UseGuards(RoleGuard)
+  @Roles('admin', 'user')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('accessToken')
+  @ApiTags('users')
+  async getUser(@Req() req) {
+    return this.authService.getUser(req);
   }
 }
