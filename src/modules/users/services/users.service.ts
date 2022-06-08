@@ -22,7 +22,7 @@ export class UsersService {
     try {
       return this.usersRepository.find({
         where: { isActive: true },
-        relations: ['role', 'task'],
+        relations: ['role'],
         select: [
           'username',
           'email',

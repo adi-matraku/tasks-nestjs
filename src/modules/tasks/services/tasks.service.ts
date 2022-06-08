@@ -12,6 +12,7 @@ import { queryDto } from '../dtos/query.dto';
 import { EditTaskDto } from '../dtos/edit-task.dto';
 import { TaskQuery } from '../models/task-query.model';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { Request } from 'express';
 
 @Injectable()
 export class TasksService {
@@ -178,11 +179,19 @@ export class TasksService {
     }
   }
 
-  async editStatus(editStatusDto: statusDto, id: number): Promise<Task> {
+  async editStatus(
+    req: Request,
+    editStatusDto: statusDto,
+    id: number
+  ): Promise<Task> {
     try {
+      console.log('req dude', req.user);
+
       const task = await this.taskRepository.findOne({
         where: { id: id, isActive: true },
       });
+
+      console.log(task);
       if (!task) {
         throw new NotFoundException('Task not found');
       }

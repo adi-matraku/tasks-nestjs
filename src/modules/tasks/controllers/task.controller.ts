@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -22,6 +23,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../auth/utils/get-user.decorator';
 import { UserEntity } from '../../users/entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @Controller('tasks')
 export class TaskController {
@@ -70,8 +72,12 @@ export class TaskController {
   @UsePipes(ValidationPipe)
   @ApiBearerAuth('accessToken')
   @ApiTags('tasks')
-  async editStatus(@Body() editStatusDto: statusDto, @Param('id') id: number) {
-    return this.tasksService.editStatus(editStatusDto, id);
+  async editStatus(
+    @Req() req: Request,
+    @Body() editStatusDto: statusDto,
+    @Param('id') id: number
+  ) {
+    return this.tasksService.editStatus(req, editStatusDto, id);
   }
 
   @Delete(':id')

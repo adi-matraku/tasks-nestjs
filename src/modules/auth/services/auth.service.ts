@@ -14,7 +14,6 @@ import { UserEntity } from '../../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { RefreshTokenEntity } from '../entities/refresh-token.entity';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { JwtPayloadInterface } from '../models/jwt-payload.interface';
 import { DeleteRefreshTokenDto } from '../dtos/delete-refresh-token.dto';
 import { Request } from 'express';
 
@@ -113,6 +112,7 @@ export class AuthService {
   }
 
   getUser(req: Request) {
+    console.log(req);
     return req.user;
   }
 

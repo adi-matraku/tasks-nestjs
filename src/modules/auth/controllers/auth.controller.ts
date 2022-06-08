@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Post,
   Req,
   UseGuards,
@@ -39,6 +40,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
   @ApiTags('users')
   async login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.validateUser(loginUserDto);
