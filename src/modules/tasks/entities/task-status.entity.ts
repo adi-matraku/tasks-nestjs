@@ -16,7 +16,7 @@ export class TaskStatusEntity {
   @Column()
   type: string;
 
-  @Column({ default: true })
+  @Column({ default: true, select: false })
   isActive: boolean;
 
   // @Column({ default: null })

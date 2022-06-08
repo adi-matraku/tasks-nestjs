@@ -9,7 +9,7 @@ export class TaskTypeEntity {
   @Column()
   name: string;
 
-  @Column({ default: true })
+  @Column({ default: true, select: false })
   isActive: boolean;
 
   @ManyToMany(() => TaskEntity)

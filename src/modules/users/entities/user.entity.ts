@@ -41,7 +41,7 @@ export class UserEntity {
   @Column({ default: null })
   lastUpdatedAt: Date;
 
-  @Column({ default: true })
+  @Column({ default: true, select: false })
   isActive: boolean;
 
   @OneToMany(() => TaskEntity, task => task.id)

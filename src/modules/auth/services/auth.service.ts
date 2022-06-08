@@ -40,7 +40,9 @@ export class AuthService {
         const { id } = user;
         const payload = { id };
         console.log('payload', payload);
-        const accessToken = this.jwtService.sign(payload, { expiresIn: 5000 });
+        const accessToken = this.jwtService.sign(payload, {
+          expiresIn: 3600000,
+        });
         const refreshToken = await this.hashData(user.username);
         const tokenDb = new RefreshTokenEntity();
         tokenDb.refresh_token = refreshToken;
@@ -78,7 +80,7 @@ export class AuthService {
 
       if (token) {
         const newAccessToken = this.jwtService.sign(payload, {
-          expiresIn: 5000,
+          expiresIn: 3600000,
         });
         const refreshToken = await this.hashData(user.username);
         const tokenDb = new RefreshTokenEntity();

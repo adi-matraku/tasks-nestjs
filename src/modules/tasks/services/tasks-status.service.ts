@@ -17,7 +17,10 @@ export class TasksStatusService {
 
   async getAll(): Promise<TaskStatus[]> {
     try {
-      return this.taskStatusRepository.find({ where: { isActive: true } });
+      return this.taskStatusRepository.find({
+        where: { isActive: true },
+        // select: ['id', 'type'],
+      });
     } catch (err) {
       throw err;
     }

@@ -23,7 +23,7 @@ export class TaskEntity {
   description: string;
 
   @Exclude()
-  @Column({ default: true })
+  @Column({ default: true, select: false })
   isActive: boolean;
 
   @Column()
