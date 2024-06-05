@@ -61,6 +61,33 @@ export class UsersService {
     }
   }
 
+  async registerUser(registerUser: CreateUserDto): Promise<User> {
+    try {
+      await this.checkAuthentication(registerUser);
+      const roleId = await this.checkRole(registerUser);
+      console.log(registerUser);
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await this.hashPassword(
+        registerUser.password,
+        salt
+      );
+      const user = new UserEntity();
+      user.username = registerUser.username.toLowerCase();
+      user.email = registerUser.email.toLowerCase();
+      user.firstName = registerUser.firstName;
+      user.lastName = registerUser.lastName;
+      user.password = hashedPassword;
+      user.role = roleId;
+      user.salt = salt;
+      user.lastUpdatedAt = user.createdAt = new Date();
+
+      await this.usersRepository.save(user);
+      return new User({ ...user, password: undefined, salt: undefined });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createOne(createUserDto: CreateUserDto): Promise<User> {
     try {
       await this.checkAuthentication(createUserDto);

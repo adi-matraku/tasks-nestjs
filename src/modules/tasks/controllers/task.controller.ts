@@ -31,7 +31,7 @@ export class TaskController {
 
   @Get('')
   @UseGuards(RoleGuard)
-  @Roles('admin')
+  @Roles('admin', 'user')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('accessToken')
   @ApiTags('tasks')

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Post,
@@ -37,6 +36,13 @@ export class AuthController {
   @ApiTags('users')
   async createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createOne(createUserDto);
+  }
+
+  @Post('register')
+  @UsePipes(ValidationPipe)
+  @ApiTags('users')
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.registerUser(createUserDto);
   }
 
   @Post('login')
